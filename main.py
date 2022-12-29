@@ -9,7 +9,7 @@ def hello():
     return "NLP DOCUMENT CLASSIFICATION API"
 
 # Load the FastText model from a pickle file using joblib
-loaded_model = fasttext.load_model("fasttext_model.bin");
+loaded_model = fasttext.load_model("./models/fasttext_model.bin");
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
