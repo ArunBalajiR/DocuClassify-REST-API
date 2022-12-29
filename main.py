@@ -9,7 +9,11 @@ def hello():
     return "NLP DOCUMENT CLASSIFICATION API"
 
 # Load the FastText model from a pickle file using joblib
+<<<<<<< HEAD
 loaded_model = fasttext.load_model("./models/fasttext_model.bin");
+=======
+loaded_model = fasttext.load_model("models/fasttext_model.bin")
+>>>>>>> db53e1ee19c34978f98a9f182fe620055e3b0355
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -30,5 +34,5 @@ def preprocess(text):
     text = re.sub(' +', ' ', text)
     return text.strip().lower()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
