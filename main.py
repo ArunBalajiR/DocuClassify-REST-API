@@ -1,12 +1,33 @@
 from flask import Flask, request,jsonify
 import fasttext
 import re
+import joblib
+# Load trained model
+clf = joblib.load('./models/model.joblib')
+tfidf = joblib.load('./models/tfidf_model.joblib')
+mlb = joblib.load('./models/mlb_model.joblib')
+
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def hello():
     return "NLP DOCUMENT CLASSIFICATION API"
+
+@app.route('/gettags', methods=['POST'])
+def predictTags():
+    try:
+        text = request.json['text']
+        preprocessed_text = preprocess(text)
+        prediction = loaded_model.predict(preprocessed_text)
+        prediction_label, prediction_probability = prediction[0][0], prediction[1][0]
+        label = prediction_label.replace('__label__', '')
+        return jsonify({
+            "prediction": label,
+            "probability": round(prediction_probability * 100, 2)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 # Load the FastText model from a pickle file using joblib
 loaded_model = fasttext.load_model("./models/fasttext_model.bin");
