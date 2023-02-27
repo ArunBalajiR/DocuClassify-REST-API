@@ -11,6 +11,8 @@ app = Flask(__name__)
 def hello():
     return "NLP DOCUMENT CLASSIFICATION API"
 
+# Load the FastText model from a pickle file using joblib
+loaded_model = fasttext.load_model("./models/fasttext_model.bin")
 
 # Load trained model
 clf = joblib.load('./models/lob_predictor/lobmodel.joblib')
@@ -21,9 +23,24 @@ tclf = joblib.load('./models/tags_predictor/tagsmodel.joblib')
 ttfidf = joblib.load('./models/tags_predictor/tags_tfidf_model.joblib')
 tmlb = joblib.load('./models/tags_predictor/tags_mlb_model.joblib')
 
-
 @app.route('/predict', methods=['POST'])
 def predict():
+    try:
+        text = request.json['text']
+        preprocessed_text = preprocess(text)
+        prediction = loaded_model.predict(preprocessed_text)
+        prediction_label, prediction_probability = prediction[0][0], prediction[1][0]
+        label = prediction_label.replace('__label__', '')
+        return jsonify({
+            "prediction": label,
+            "probability": round(prediction_probability * 100, 2)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/predictTags', methods=['POST'])
+def predictTags():
     try:
         text = [request.json['text']]
         # LOB PREDICTION
